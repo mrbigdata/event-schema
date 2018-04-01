@@ -1,0 +1,63 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.avast.gradle:docker-compose-gradle-plugin:0.4.5"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.2.0"
+    }
+}
+plugins {
+    // Apply the java-library plugin to add support for Java Library
+    id 'java-library'
+}
+
+apply from: 'coverage.gradle'
+apply plugin: 'docker-compose'
+apply plugin: "com.diffplug.gradle.spotless"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+jar {
+    baseName = 'event-schema'
+}
+
+dependencies {
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.6'
+    compile 'org.inferred:freebuilder:1.13.2'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.9.3'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.9.3'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.3'
+
+    // Common
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+    compile group: 'com.google.guava', name: 'guava', version: '20.0'
+
+    // Test
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+    testCompile "org.powermock:powermock-mockito-release-full:1.6.1"
+    testCompile group: 'org.hamcrest', name: 'hamcrest-junit', version: '2.0.0.0'
+    testCompile group: 'com.jayway.jsonpath', name: 'json-path-assert', version: '2.2.0'
+    testCompile 'org.assertj:assertj-core:3.8.0'
+}
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    // Use jcenter for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+// Spotless code formatting
+spotless {
+    java {
+        googleJavaFormat('1.4')
+    }
+}
+compileJava.dependsOn 'spotlessApply'
